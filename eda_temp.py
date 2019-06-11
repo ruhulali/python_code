@@ -11,16 +11,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas_profiling as pp
-sns.set()
+sns.set_style("whitegrid")
 %matplotlib inline
-plt.style.use('ggplot')
+plt.style.use('ggplot') # (bmh, fivethirtyeight, seaborn-dark, ggplot)
 
 
 ### Upload Files 
 df = pd.read_csv("Train.csv")
 df = pd.read_csv("D:/KNOWLEDGE KORNER/ANALYTICS/MISC/NOTES/Analytics Notes/Practice/Kaggle & Hackathons/Tips/tips.csv")
 df = pd.read_csv("E:/A_NOTES/Analytics Notes/Practice/Kaggle & Hackathons/Tips/tips.csv") 
-
+df = sns.load_dataset("tips")  # Load data
 
 ### File Info
 df.info()
@@ -47,6 +47,8 @@ missing_data.head(20)*100
 tips_num = df.select_dtypes(include=['float64', 'int64'])
 tips_cat = df.select_dtypes(include=['object'])
 sns.pairplot(df, hue='sex')
+for i in range(0, len(tips_num.columns),5):
+    sns.pairplot(tips_num, y_vars=['tip'], x_vars=tips_num.columns[i:i+5])    
 
 
 ### Correlation 
@@ -58,14 +60,16 @@ cols = df.corr().nlargest(k, 'tip')['tip'].index
 cm = df[cols].corr()
 plt.figure()
 sns.heatmap(cm, annot=True, cmap = 'viridis')
-# or 
-for i in range(0, len(tips_num.columns),5):
-    sns.pairplot(tips_num, y_vars=['tip'], x_vars=tips_num.columns[i:i+5])    
-   
+
 
 ### Bar Chart 
 sns.countplot(x='sex', data=df)
 sns.factorplot(x='sex', col='day', kind='count', data=df)
+sns.barplot(x="time", y="total_bill", hue="sex", data=df)
+
+### Scatter Plot
+sns.lmplot(x='total_bill', y='tip', hue='sex', data=df, scatter_kws={'edgecolors': 'w'}, fit_reg=True)
+plt.show()
 
 
 ### Histogram
@@ -84,7 +88,9 @@ y = list(df.tip)
 plt.boxplot(y)     
 # or
 df.boxplot(column="tip",by="sex")
-    
+# or
+sns.boxplot(x="day", y="tip", data=df)    
+
 
 ### Line Chart
 bill = df.groupby('sex')['tip'].sum()
@@ -148,26 +154,21 @@ sns.heatmap(pd.crosstab([df.sex], [df.day]), cmap="tab10", annot=True, cbar=True
 df.pivot_table(values=["tip"], index=["sex", "smoker", "time", "size"], aggfunc=np.mean) # pivot table (numerial as x)
 sns.heatmap(df.pivot_table(values=["tip"], index=["sex", "time", "smoker"], aggfunc=np.mean), annot=True, cbar=True)
 
-plt.figure(figsize=(6, 8))
+plt.figure()
 splot = sns.barplot(data=df, x = 'sex', y = 'total_bill', ci = None)
 for p in splot.patches:
-    splot.annotate(format(p.get_height(), '.2f'), (p.get_x() + p.get_width() / 2., p.get_height()), ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
+    splot.annotate(format(p.get_height(), '.2f'), (p.get_x() + p.get_width() / 2., p.get_height()), 
+    ha = 'center', va = 'center', xytext = (0, 10), textcoords = 'offset points')
 
+groupedvalues=df.groupby('time').sum().reset_index()
+g=sns.barplot(x='time',y='tip',data=groupedvalues)
+for index, row in groupedvalues.iterrows():
+    g.text(row.name,row.tip, round(row.total_bill,2), color='black', ha="center", bbox=dict(facecolor='white', alpha=5.0))
 
 #####################
 
-groupedvalues=df.groupby('day').sum().reset_index()
-g=sns.barplot(x='day',y='tip',data=groupedvalues)
-for index, row in groupedvalues.iterrows():
-    g.text(row.name,row.tip, round(row.total_bill,2), color='black', ha="center")
-    
-groupedvalues=df.groupby('day').sum().reset_index()
-pal = sns.color_palette("Greens_d", len(groupedvalues))
-rank = groupedvalues["total_bill"].argsort().argsort() 
-g=sns.barplot(x='day',y='tip',data=groupedvalues, palette=np.array(pal[::-1])[rank])
-for index, row in groupedvalues.iterrows():
-    g.text(row.name,row.tip, round(row.total_bill,2), color='black', ha="center")
-plt.show()
+ 
+
 
 
 
