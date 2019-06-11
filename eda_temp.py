@@ -6,6 +6,11 @@ This is a temporary script file.
 """
 ### https://towardsdatascience.com/a-starter-pack-to-exploratory-data-analysis-with-python-pandas-seaborn-and-scikit-learn-a77889485baf
 
+import os
+path="E:\A_NOTES\Analytics Notes\Python\Python_Syntax"
+os.chdir(path)
+os.getcwd()
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,12 +21,20 @@ sns.set_style("whitegrid")
 plt.style.use('ggplot') # (bmh, fivethirtyeight, seaborn-dark, ggplot)
 
 
-### Upload Files 
+### Upload CSV Files 
 df = pd.read_csv("Train.csv")
 df = pd.read_csv("D:/KNOWLEDGE KORNER/ANALYTICS/MISC/NOTES/Analytics Notes/Practice/Kaggle & Hackathons/Tips/tips.csv")
 df = pd.read_csv("E:/A_NOTES/Analytics Notes/Practice/Kaggle & Hackathons/Tips/tips.csv") 
 df = sns.load_dataset("tips")  # Load data
 
+
+### Upload HTML Files
+listofplayers = pd.read_html('https://en.wikipedia.org/wiki/World_Soccer_(magazine)')
+listofplayers[0]
+
+
+### Save in CSV
+df.to_csv('tips.csv')
 
 ### Data Info
 df.info()
@@ -54,8 +67,7 @@ for i in range(0, len(tips_num.columns),5):
 
 ### Basic 
 df['sex'].value_counts() # value_counts, unique, nunique
-crosstab = df.groupby('sex')
-crosstab.describe() # sum, mean, describe
+df.groupby('day').mean() # sum, mean, describe
 
 ### Correlation 
 plt.figure()
