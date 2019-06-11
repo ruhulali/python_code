@@ -22,11 +22,13 @@ df = pd.read_csv("D:/KNOWLEDGE KORNER/ANALYTICS/MISC/NOTES/Analytics Notes/Pract
 df = pd.read_csv("E:/A_NOTES/Analytics Notes/Practice/Kaggle & Hackathons/Tips/tips.csv") 
 df = sns.load_dataset("tips")  # Load data
 
-### File Info
+
+### Data Info
 df.info()
 df.head(10)
 df.describe()
 df.nunique()
+
 
 ### Change data type
 df["size"]= df["size"].astype(object) 
@@ -50,6 +52,10 @@ sns.pairplot(df, hue='sex')
 for i in range(0, len(tips_num.columns),5):
     sns.pairplot(tips_num, y_vars=['tip'], x_vars=tips_num.columns[i:i+5])    
 
+### Basic 
+df['sex'].value_counts() # value_counts, unique, nunique
+crosstab = df.groupby('sex')
+crosstab.describe() # sum, mean, describe
 
 ### Correlation 
 plt.figure()
@@ -61,7 +67,6 @@ cm = df[cols].corr()
 plt.figure()
 sns.heatmap(cm, annot=True, cmap = 'viridis')
 
-
 ### Bar Chart 
 sns.countplot(x='sex', data=df)
 sns.factorplot(x='sex', col='day', kind='count', data=df)
@@ -70,7 +75,6 @@ sns.barplot(x="time", y="total_bill", hue="sex", data=df)
 ### Scatter Plot
 sns.lmplot(x='total_bill', y='tip', hue='sex', data=df, scatter_kws={'edgecolors': 'w'}, fit_reg=True)
 plt.show()
-
 
 ### Histogram
 num_bins = 10
@@ -82,7 +86,6 @@ df.hist(column="tip", by="sex",bins=10)
 #or
 tips_num.hist(bins=10)
 
-
 ### Box Plot
 y = list(df.tip) 
 plt.boxplot(y)     
@@ -90,17 +93,6 @@ plt.boxplot(y)
 df.boxplot(column="tip",by="sex")
 # or
 sns.boxplot(x="day", y="tip", data=df)    
-
-
-### Line Chart
-bill = df.groupby('sex')['tip'].sum()
-#figure size(width, height)
-plt.figure(dpi = 100)
-plt.xlabel('Tip', fontsize = 12)
-plt.ylabel('Size', fontsize = 12)
-plt.title('Tip By Size')
-plt.plot(bill)
-bill.idxmax()
 
 
 ### Categorical Summarized
